@@ -17,10 +17,13 @@ GLFLAGS= -lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor 
 helloWorld: src/helloWorld.cpp 
 	@$(CC) -o helloWorld src/helloWorld.cpp $(CFLAGS) $(GLFLAGS) 
 
+helloTriangle: src/helloTriangle.cpp
+	@$(CC) -o helloTriangle src/helloTriangle.cpp $(CFLAGS) $(GLFLAGS) 
+
 astyle: src/*.cpp
 	astyle --style=kr src/*.cpp
 
 
 
 clean:
-	@rm -f src/*.orig helloWorld
+	@rm -f src/*.orig helloWorld helloTriangle
