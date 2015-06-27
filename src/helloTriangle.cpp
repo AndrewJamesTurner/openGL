@@ -137,12 +137,16 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+		// load shaderprogram 
         glUseProgram(shaderProgram);
+
+		// bind the VOA of the thing to draw
         glBindVertexArray(VAO);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		// draw it
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		// unbind the thing to draw
         glBindVertexArray(0);
 
         // Swap the buffers
