@@ -30,10 +30,13 @@ HelloTextures: src/HelloTextures.cpp include/Shader.hpp
 HelloTransformations: src/HelloTransformations.cpp include/Shader.hpp 
 	@$(CC) -o HelloTransformations src/HelloTransformations.cpp include/Shader.hpp  $(CFLAGS) $(GLFLAGS) 
 
+HelloCoordinateSystems: src/HelloCoordinateSystems.cpp include/Shader.hpp 
+	@$(CC) -o HelloCoordinateSystems src/HelloCoordinateSystems.cpp include/Shader.hpp  $(CFLAGS) $(GLFLAGS) 
+
 astyle: src/*.cpp include/*.h
 	astyle --style=kr src/*.cpp include/*.h
 
 
 
 clean:
-	@rm -f src/*.orig include/*.orig HelloWorld HelloTriangle HelloShaders HelloTextures HelloTransformations
+	@rm -f src/*.orig include/*.orig HelloWorld HelloTriangle HelloShaders HelloTextures HelloTransformations HelloCoordinateSystems
