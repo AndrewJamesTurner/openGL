@@ -11,8 +11,8 @@ CC=g++
 	# -fpermissive
 	# -std=c++11		use c++ 2011 standard
 	
-CFLAGS= -std=c++11 -pedantic -Wall -O3
-GLFLAGS= -lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread
+CFLAGS= -std=c++11 -pedantic -Wall -g
+GLFLAGS= -lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -lSOIL
 
 HelloWorld: src/HelloWorld.cpp 
 	@$(CC) -o HelloWorld src/HelloWorld.cpp $(CFLAGS) $(GLFLAGS) 
@@ -23,10 +23,14 @@ HelloTriangle: src/HelloTriangle.cpp
 HelloShaders: src/HelloShaders.cpp include/Shader.h
 	@$(CC) -o HelloShaders src/HelloShaders.cpp include/Shader.h $(CFLAGS) $(GLFLAGS) 
 
+HelloTextures: src/HelloTextures.cpp include/Shader.h
+	@$(CC) -o HelloTextures src/HelloTextures.cpp include/Shader.h $(CFLAGS) $(GLFLAGS) 
+
+
 astyle: src/*.cpp include/*.h
 	astyle --style=kr src/*.cpp include/*.h
 
 
 
 clean:
-	@rm -f src/*.orig include/*.orig HelloWorld HelloTriangle HelloShaders
+	@rm -f src/*.orig include/*.orig HelloWorld HelloTriangle HelloShaders HelloTextures

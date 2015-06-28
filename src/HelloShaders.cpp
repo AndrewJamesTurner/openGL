@@ -32,7 +32,7 @@ int main()
     glViewport(0, 0, WIDTH, HEIGHT);
     glfwSetKeyCallback(window, key_callback);
 
-    shaderProgram = new Shader("shaders/HelloShaders.vs", "shaders/HellowShaders.frag");
+    shaderProgram = new Shader("shaders/HelloShaders.vs", "shaders/HelloShaders.frag");
 
     GLfloat vertices[] = {
         // Positions         // Colors
