@@ -4,7 +4,7 @@
 // GLFW
 #include <GLFW/glfw3.h>
 
-#include "../include/Shader.h"
+#include "../include/Shader.hpp"
 
 #include <iostream>
 #include <cmath>

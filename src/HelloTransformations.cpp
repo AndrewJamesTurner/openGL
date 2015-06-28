@@ -6,9 +6,16 @@
 #include <GLFW/glfw3.h>
 
 // SOIL
-#include <SOIL/SOIL.h>
+#include <SOIL/SOIL.h> 
+
+// SLM
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "../include/Shader.hpp"
+
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
@@ -20,7 +27,6 @@ GLfloat mixture = 0.2;
 
 int main(void)
 {
-
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -36,7 +42,7 @@ int main(void)
     glViewport(0, 0, WIDTH, HEIGHT);
     glfwSetKeyCallback(window, key_callback);
 
-    shaderProgram = new Shader("shaders/HelloTextures.vs", "shaders/HelloTextures.frag");
+    shaderProgram = new Shader("shaders/HelloTransforms.vs", "shaders/HelloTransforms.frag");
 
     GLfloat vertices[] = {
         // Positions          // Colors           // Texture Coords
@@ -133,6 +139,10 @@ int main(void)
     glBindTexture(GL_TEXTURE_2D, 0);
 
 
+
+	
+
+	
     // Program loop
     while(!glfwWindowShouldClose(window)) {
 
@@ -146,10 +156,11 @@ int main(void)
         // load shaderprogram
         shaderProgram->use();
 
-        // uniforms
-        GLint mixtureLocation = glGetUniformLocation(shaderProgram->Program, "mixture");
-        glUniform1f(mixtureLocation, mixture);
-
+		// updates
+		glm::mat4 trans;
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans,(GLfloat)glfwGetTime() * 1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+		
         // Bind Textures using texture units
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -158,10 +169,37 @@ int main(void)
         glBindTexture(GL_TEXTURE_2D, texture2);
         glUniform1i(glGetUniformLocation(shaderProgram->Program, "ourTexture2"), 1);
 
+		// update uniforms
+        GLint mixtureLocation = glGetUniformLocation(shaderProgram->Program, "mixture");
+        glUniform1f(mixtureLocation, mixture);
+
+		GLuint transformLoc = glGetUniformLocation(shaderProgram->Program, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
         // Draw container
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+
+
+		// update updates (again)
+		trans = glm::mat4();
+		trans = glm::translate(trans, glm::vec3(-0.5f, +0.5f, 0.0f));
+		trans = glm::scale(trans, glm::vec3(fabs(sin((GLfloat)glfwGetTime())), fabs(sin((GLfloat)glfwGetTime())) , 1));  
+		
+
+		// uniforms (again)
+        mixtureLocation = glGetUniformLocation(shaderProgram->Program, "mixture");
+        glUniform1f(mixtureLocation, mixture);
+
+		transformLoc = glGetUniformLocation(shaderProgram->Program, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+		// Draw container (again)
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+
 
         // unbind the thing to draw
         glBindVertexArray(0);
