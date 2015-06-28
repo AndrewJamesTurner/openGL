@@ -14,16 +14,19 @@ CC=g++
 CFLAGS= -std=c++11 -pedantic -Wall -O3
 GLFLAGS= -lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread
 
-helloWorld: src/helloWorld.cpp 
-	@$(CC) -o helloWorld src/helloWorld.cpp $(CFLAGS) $(GLFLAGS) 
+HelloWorld: src/HelloWorld.cpp 
+	@$(CC) -o HelloWorld src/HelloWorld.cpp $(CFLAGS) $(GLFLAGS) 
 
-helloTriangle: src/helloTriangle.cpp
-	@$(CC) -o helloTriangle src/helloTriangle.cpp $(CFLAGS) $(GLFLAGS) 
+HelloTriangle: src/HelloTriangle.cpp
+	@$(CC) -o HelloTriangle src/HelloTriangle.cpp $(CFLAGS) $(GLFLAGS) 
+	
+HelloShaders: src/HelloShaders.cpp include/Shader.h
+	@$(CC) -o HelloShaders src/HelloShaders.cpp include/Shader.h $(CFLAGS) $(GLFLAGS) 
 
-astyle: src/*.cpp
-	astyle --style=kr src/*.cpp
+astyle: src/*.cpp include/*.h
+	astyle --style=kr src/*.cpp include/*.h
 
 
 
 clean:
-	@rm -f src/*.orig helloWorld helloTriangle
+	@rm -f src/*.orig include/*.orig HelloWorld HelloTriangle HelloShaders

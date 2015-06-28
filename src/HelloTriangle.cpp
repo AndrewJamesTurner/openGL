@@ -19,18 +19,18 @@ const GLchar* vertexShaderSource = "#version 330 core\n"
                                    "gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
                                    "}\0";
 const GLchar* fragmentShaderSourceOrange = "#version 330 core\n"
-                                     "out vec4 color;\n"
-                                     "void main()\n"
-                                     "{\n"
-                                     "color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                                     "}\n\0";
+        "out vec4 color;\n"
+        "void main()\n"
+        "{\n"
+        "color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+        "}\n\0";
 
 const GLchar* fragmentShaderSourceYellow = "#version 330 core\n"
-                                     "out vec4 color;\n"
-                                     "void main()\n"
-                                     "{\n"
-                                     "color = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
-                                     "}\n\0";
+        "out vec4 color;\n"
+        "void main()\n"
+        "{\n"
+        "color = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+        "}\n\0";
 
 int main()
 {
@@ -81,7 +81,7 @@ int main()
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
 
-	GLuint fragmentShaderYellow;
+    GLuint fragmentShaderYellow;
     fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShaderYellow, 1, &fragmentShaderSourceYellow, NULL);
     glCompileShader(fragmentShaderYellow);
@@ -106,7 +106,7 @@ int main()
         std::cout << "ERROR:LinkProgram\n" << infoLog << std::endl;
     }
 
-	GLuint shaderProgramYellow;
+    GLuint shaderProgramYellow;
     shaderProgramYellow = glCreateProgram();
     glAttachShader(shaderProgramYellow, vertexShader);
     glAttachShader(shaderProgramYellow, fragmentShaderYellow);
@@ -121,7 +121,7 @@ int main()
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShaderOrange);
-	glDeleteShader(fragmentShaderYellow);
+    glDeleteShader(fragmentShaderYellow);
 
 
     GLfloat vertices[] = {
@@ -129,19 +129,19 @@ int main()
         0.0f, -0.5f, 0.0f,  // Bottom Right
         -0.5f, -0.5f, 0.0f,  // Bottom Left
         -0.5f,  0.5f, 0.0f,   // Top Left
-		0.5f,   -0.5f,  0.0f
+        0.5f,   -0.5f,  0.0f
     };
-    
-	GLuint indicesA[] = {  // Note that we start from 0!
+
+    GLuint indicesA[] = {  // Note that we start from 0!
         3, 2, 1
     };
 
-	GLuint indicesB[] = {  // Note that we start from 0!
-        0, 1, 4    
+    GLuint indicesB[] = {  // Note that we start from 0!
+        0, 1, 4
     };
 
-    
-	GLuint VAO_A;
+
+    GLuint VAO_A;
     GLuint VBO_A;
     GLuint EBO_A;
 
@@ -165,7 +165,7 @@ int main()
     glBindVertexArray(0);
 
 
-	GLuint VAO_B;
+    GLuint VAO_B;
     GLuint VBO_B;
     GLuint EBO_B;
 
@@ -199,30 +199,30 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-		// load shaderprogram 
+        // load shaderprogram
         glUseProgram(shaderProgramOrange);
 
-		// bind the VOA of the thing to draw
+        // bind the VOA of the thing to draw
         glBindVertexArray(VAO_A);
 
-		// draw it
+        // draw it
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		// unbind the thing to draw
+        // unbind the thing to draw
         glBindVertexArray(0);
 
 
 
-		// load shaderprogram 
+        // load shaderprogram
         glUseProgram(shaderProgramYellow);
 
-		// bind the VOA of the thing to draw
+        // bind the VOA of the thing to draw
         glBindVertexArray(VAO_B);
 
-		// draw it
+        // draw it
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		// unbind the thing to draw
+        // unbind the thing to draw
         glBindVertexArray(0);
 
 
