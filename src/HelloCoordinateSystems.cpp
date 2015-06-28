@@ -24,7 +24,7 @@ const GLfloat HEIGHT = 600;
 Shader *shaderProgram;
 GLfloat mixture = 0.2;
 
-GLfloat FoV = 45.0f;
+GLfloat FoV = glm::radians(45.0f);
 GLfloat aspectRatio = WIDTH / HEIGHT;
 
 
