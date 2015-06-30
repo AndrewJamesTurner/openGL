@@ -1,3 +1,4 @@
+
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -8,24 +9,42 @@
 // SOIL
 #include <SOIL/SOIL.h>
 
-// SLM
+// glm
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "../include/Shader.hpp"
+#include "../include/Camera.hpp"
 
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+void do_movement(void);
+
 
 const GLfloat WIDTH = 800;
 const GLfloat HEIGHT = 600;
+
 Shader *shaderProgram;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
 GLfloat mixture = 0.2;
 
-GLfloat FoV = glm::radians(45.0f);
+GLfloat FoV = 45.0f;
 GLfloat aspectRatio = WIDTH / HEIGHT;
+
+bool keys[1024];
+
+GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
+GLfloat lastFrame = 0.0f;  	// Time of last frame
+
+GLfloat lastX = WIDTH/2;
+GLfloat lastY = HEIGHT/2;
+bool firstMouse = true;
 
 
 int main(void)
@@ -36,18 +55,24 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
+
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     glewExperimental = GL_TRUE;
     glewInit();
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     glViewport(0, 0, WIDTH, HEIGHT);
+
     glfwSetKeyCallback(window, key_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     glEnable(GL_DEPTH_TEST);
 
-    shaderProgram = new Shader("shaders/HelloCoordinateSystems.vs", "shaders/HelloCoordinateSystems.frag");
+    shaderProgram = new Shader("shaders/HelloCamera.vs", "shaders/HelloCamera.frag");
 
     GLfloat vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -145,7 +170,6 @@ int main(void)
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-
     glGenTextures(1, &texture2);
     glBindTexture(GL_TEXTURE_2D, texture2);
 
@@ -166,21 +190,6 @@ int main(void)
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    // model matrix
-    //glm::mat4 model;
-    //model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-
-    // view matrix
-    glm::mat4 view;
-    // Note that we're translating the scene in the reverse direction of where we want to move
-    //view = glm::rotate(view, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
-    // projection matrix
-    //glm::mat4 projection;
-    //projection = glm::perspective(FoV, aspectRatio, 0.1f, 100.0f);
-
 
 
     glm::vec3 cubePositions[] = {
@@ -200,8 +209,15 @@ int main(void)
     // Program loop
     while(!glfwWindowShouldClose(window)) {
 
+        //
+        GLfloat currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+        //std::cout << 1/deltaTime << "\n";
+
         // Check and call events
         glfwPollEvents();
+        do_movement();
 
         // Rclear screen
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -211,8 +227,8 @@ int main(void)
         shaderProgram->use();
 
         // updates
-        glm::mat4 projection;
-        projection = glm::perspective(FoV, aspectRatio, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(FoV), aspectRatio, 0.1f, 100.0f);
+        glm::mat4 view = camera.GetViewMatrix();
 
         // Bind Textures using texture units
         glActiveTexture(GL_TEXTURE0);
@@ -269,6 +285,7 @@ int main(void)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
+
     // When a user presses the escape key, we set the WindowShouldClose property to true,
     // closing the application
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -295,4 +312,45 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         aspectRatio = aspectRatio - 0.01;
     }
 
+    if(action == GLFW_PRESS)
+        keys[key] = true;
+    else if(action == GLFW_RELEASE)
+        keys[key] = false;
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+
+    if(firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    GLfloat xoffset = xpos - lastX;
+    GLfloat yoffset = lastY - ypos; // Reversed since y-coordinates range from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    camera.ProcessMouseScroll(yoffset);
+}
+
+
+void do_movement()
+{
+    // Camera controls
+    if(keys[GLFW_KEY_W])
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if(keys[GLFW_KEY_S])
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if(keys[GLFW_KEY_A])
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if(keys[GLFW_KEY_D])
+        camera.ProcessKeyboard(RIGHT, deltaTime);
 }

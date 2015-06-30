@@ -32,11 +32,14 @@ HelloTransformations: src/HelloTransformations.cpp include/Shader.hpp
 
 HelloCoordinateSystems: src/HelloCoordinateSystems.cpp include/Shader.hpp 
 	@$(CC) -o HelloCoordinateSystems src/HelloCoordinateSystems.cpp include/Shader.hpp  $(CFLAGS) $(GLFLAGS) 
+	
+HelloCamera: src/HelloCamera.cpp include/Shader.hpp include/Camera.hpp
+	@$(CC) -o HelloCamera src/HelloCamera.cpp include/Shader.hpp include/Camera.hpp $(CFLAGS) $(GLFLAGS)
 
-astyle: src/*.cpp include/*.h
-	astyle --style=kr src/*.cpp include/*.h
+astyle: src/*.cpp include/*.hpp
+	astyle --style=kr src/*.cpp include/*.hpp
 
 
 
 clean:
-	@rm -f src/*.orig include/*.orig HelloWorld HelloTriangle HelloShaders HelloTextures HelloTransformations HelloCoordinateSystems
+	@rm -f src/*.orig include/*.orig HelloWorld HelloTriangle HelloShaders HelloTextures HelloTransformations HelloCoordinateSystems HelloCamera
